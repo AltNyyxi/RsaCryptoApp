@@ -1,0 +1,310 @@
+﻿<Window x:Class="RsaCryptoApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="RSA Шифратор / Дешифратор" Height="700" Width="1100"
+        Background="#1A1A2E" FontFamily="Consolas" ResizeMode="CanResize"
+        MinWidth="900" MinHeight="600">
+
+    <Window.Resources>
+        <!-- Стиль метки -->
+        <Style x:Key="LabelStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#A0AEC0"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Margin" Value="0,0,0,3"/>
+            <Setter Property="FontFamily" Value="Consolas"/>
+        </Style>
+
+        <!-- Стиль поля ввода -->
+        <Style x:Key="InputStyle" TargetType="TextBox">
+            <Setter Property="Background" Value="#16213E"/>
+            <Setter Property="Foreground" Value="#E2E8F0"/>
+            <Setter Property="BorderBrush" Value="#0F3460"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="6,4"/>
+            <Setter Property="FontFamily" Value="Consolas"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="CaretBrush" Value="#E94560"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="#E94560"/>
+                </Trigger>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="#E94560"/>
+                </Trigger>
+                <Trigger Property="IsReadOnly" Value="True">
+                    <Setter Property="Foreground" Value="#68D391"/>
+                    <Setter Property="Background" Value="#0D1B2A"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Стиль кнопки -->
+        <Style x:Key="ButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#E94560"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="14,8"/>
+            <Setter Property="FontFamily" Value="Consolas"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="4"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#C53050"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#9B2C3E"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="#4A4A6A"/>
+                                <Setter Property="Foreground" Value="#888"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль кнопки (вторичный) -->
+        <Style x:Key="SecondaryButtonStyle" TargetType="Button" BasedOn="{StaticResource ButtonStyle}">
+            <Setter Property="Background" Value="#0F3460"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#1A4F8A"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#0A2540"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Стиль чекбокса -->
+        <Style x:Key="CheckBoxStyle" TargetType="RadioButton">
+            <Setter Property="Foreground" Value="#A0AEC0"/>
+            <Setter Property="FontFamily" Value="Consolas"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Margin" Value="0,0,20,0"/>
+        </Style>
+
+        <!-- Стиль Memo -->
+        <Style x:Key="MemoStyle" TargetType="TextBox">
+            <Setter Property="Background" Value="#0D1B2A"/>
+            <Setter Property="Foreground" Value="#68D391"/>
+            <Setter Property="BorderBrush" Value="#0F3460"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontFamily" Value="Consolas"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="Padding" Value="6"/>
+        </Style>
+
+        <!-- Стиль заголовка секции -->
+        <Style x:Key="SectionHeader" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#E94560"/>
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+            <Setter Property="FontFamily" Value="Consolas"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Заголовок -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,16">
+            <TextBlock Text="RSA CIPHER TOOL" 
+                       Foreground="#E94560" 
+                       FontSize="22" 
+                       FontWeight="Bold"
+                       FontFamily="Consolas"/>
+            <TextBlock Text="Быстрое возведение в степень · Расширенный алгоритм Евклида · Побайтовое шифрование"
+                       Foreground="#4A5568" FontSize="10" FontFamily="Consolas" Margin="0,2,0,0"/>
+            <Rectangle Height="1" Fill="#0F3460" Margin="0,10,0,0"/>
+        </StackPanel>
+
+        <!-- Режим -->
+        <Border Grid.Row="1" Background="#16213E" BorderBrush="#0F3460" BorderThickness="1" 
+                CornerRadius="6" Padding="14,10" Margin="0,0,0,12">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="РЕЖИМ:" Style="{StaticResource LabelStyle}" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                <RadioButton x:Name="rbEncrypt" Content="🔒  ШИФРОВАНИЕ" Style="{StaticResource CheckBoxStyle}"
+                             IsChecked="True" Checked="ModeChanged"/>
+                <RadioButton x:Name="rbDecrypt" Content="🔓  ДЕШИФРОВАНИЕ" Style="{StaticResource CheckBoxStyle}"
+                             Checked="ModeChanged"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Параметры -->
+        <Border Grid.Row="2" Background="#16213E" BorderBrush="#0F3460" BorderThickness="1" 
+                CornerRadius="6" Padding="14,12" Margin="0,0,0,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- p -->
+                <StackPanel Grid.Column="0">
+                    <TextBlock Style="{StaticResource LabelStyle}">
+                        <Run Text="p" Foreground="#E94560" FontWeight="Bold"/>
+                        <Run Text=" — простое число"/>
+                    </TextBlock>
+                    <TextBox x:Name="txtP" Style="{StaticResource InputStyle}" 
+                             TextChanged="ParamChanged" ToolTip="Простое число p (например: 61)"/>
+                </StackPanel>
+
+                <!-- q -->
+                <StackPanel Grid.Column="2">
+                    <TextBlock Style="{StaticResource LabelStyle}">
+                        <Run Text="q" Foreground="#E94560" FontWeight="Bold"/>
+                        <Run Text=" — простое число"/>
+                    </TextBlock>
+                    <TextBox x:Name="txtQ" Style="{StaticResource InputStyle}"
+                             TextChanged="ParamChanged" ToolTip="Простое число q (например: 53)"/>
+                </StackPanel>
+
+                <!-- r = p*q -->
+                <StackPanel Grid.Column="4">
+                    <TextBlock Style="{StaticResource LabelStyle}">
+                        <Run Text="r" Foreground="#68D391" FontWeight="Bold"/>
+                        <Run Text=" = p × q"/>
+                    </TextBlock>
+                    <TextBox x:Name="txtR" Style="{StaticResource InputStyle}" IsReadOnly="True"
+                             ToolTip="Модуль r = p * q (вычисляется автоматически)"/>
+                </StackPanel>
+
+                <!-- φ(r) -->
+                <StackPanel Grid.Column="6">
+                    <TextBlock Style="{StaticResource LabelStyle}">
+                        <Run Text="φ(r)" Foreground="#68D391" FontWeight="Bold"/>
+                        <Run Text=" = (p-1)(q-1)"/>
+                    </TextBlock>
+                    <TextBox x:Name="txtPhi" Style="{StaticResource InputStyle}" IsReadOnly="True"
+                             ToolTip="Функция Эйлера φ(r) (вычисляется автоматически)"/>
+                </StackPanel>
+
+                <!-- e — открытая экспонента -->
+                <StackPanel Grid.Column="8">
+                    <TextBlock Style="{StaticResource LabelStyle}">
+                        <Run Text="e" Foreground="#FBD38D" FontWeight="Bold"/>
+                        <Run Text=" — откр. экспонента"/>
+                    </TextBlock>
+                    <TextBox x:Name="txtE" Style="{StaticResource InputStyle}"
+                             TextChanged="ParamChanged" ToolTip="Открытая экспонента e: 1 &lt; e &lt; φ(r), НОД(e,φ(r))=1"/>
+                </StackPanel>
+
+                <!-- d — закрытая экспонента -->
+                <StackPanel Grid.Column="10">
+                    <TextBlock Style="{StaticResource LabelStyle}">
+                        <Run Text="d" Foreground="#68D391" FontWeight="Bold"/>
+                        <Run Text=" — закр. ключ Kс"/>
+                    </TextBlock>
+                    <TextBox x:Name="txtD" Style="{StaticResource InputStyle}" IsReadOnly="True"
+                             ToolTip="Закрытый ключ d (вычисляется расширенным алг. Евклида)"/>
+                </StackPanel>
+
+                <!-- Кнопки -->
+                <StackPanel Grid.Column="12" VerticalAlignment="Bottom">
+                    <Button x:Name="btnOpenFile" Content="📂 Открыть файл" 
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Click="BtnOpenFile_Click" Margin="0,0,0,6"/>
+                    <Button x:Name="btnProcess" Content="⚙️ Выполнить" 
+                            Style="{StaticResource ButtonStyle}"
+                            Click="BtnProcess_Click" IsEnabled="False"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Статус файла и ошибки -->
+        <Border Grid.Row="3" Background="#16213E" BorderBrush="#0F3460" BorderThickness="1"
+                CornerRadius="6" Padding="14,12" Margin="0,0,0,12">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Статус-бар -->
+                <Grid Grid.Row="0" Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Name="txtStatus" Grid.Column="0"
+                               Text="Файл не выбран" Foreground="#4A5568" 
+                               FontFamily="Consolas" FontSize="11" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="txtError" Grid.Column="1"
+                               Text="" Foreground="#FC8181" 
+                               FontFamily="Consolas" FontSize="11" VerticalAlignment="Center"/>
+                </Grid>
+
+                <!-- Два Memo-поля -->
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Style="{StaticResource SectionHeader}" Text="ИСХОДНЫЙ ФАЙЛ (байты в dec)"/>
+                        <TextBox x:Name="memoSource" Style="{StaticResource MemoStyle}" Height="250"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2">
+                        <TextBlock x:Name="lblResult" Style="{StaticResource SectionHeader}" 
+                                   Text="ЗАШИФРОВАННЫЙ ФАЙЛ (16-бит блоки в dec)"/>
+                        <TextBox x:Name="memoResult" Style="{StaticResource MemoStyle}" Height="250"/>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <!-- Нижняя строка состояния -->
+        <Border Grid.Row="4" Background="#0D1B2A" BorderBrush="#0F3460" BorderThickness="1"
+                CornerRadius="4" Padding="10,6">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="txtInfo" Grid.Column="0"
+                           Text="RSA: Ko = (e, r) — открытый ключ   |   Kc = (d, r) — закрытый ключ"
+                           Foreground="#4A5568" FontFamily="Consolas" FontSize="10"/>
+                <TextBlock Grid.Column="1"
+                           Text="v1.0 · Без BigInteger · long арифметика"
+                           Foreground="#2D3748" FontFamily="Consolas" FontSize="10"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
